@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/Teeworlds-Server-Moderation/common/mqtt"
+	"github.com/Teeworlds-Server-Moderation/monitor-zCatch/parse"
 )
 
 var (
@@ -29,7 +30,10 @@ func parseEvent(source, line string) (mqtt.Message, error) {
 
 	switch logLevel {
 	case "client_enter":
-		return parseClientEnter(source, timestamp, logLine)
+		return parse.PlayerJoined(source, timestamp, logLine)
+	case "client_drop":
+		return parse.PlayerLeft(source, timestamp, logLine)
+
 	}
 	return emptyMsg, fmt.Errorf("Unknown log level: %s", logLevel)
 }

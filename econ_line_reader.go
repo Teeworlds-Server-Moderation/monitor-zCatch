@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/jxsl13/twapi/econ"
 )
@@ -17,6 +18,7 @@ func econLineReader(ctx context.Context, conn *econ.Conn, lChan chan string) {
 		default:
 			if err != nil {
 				log.Println("Failed to read line: ", err)
+				time.Sleep(time.Second)
 				continue
 			}
 			lChan <- line
