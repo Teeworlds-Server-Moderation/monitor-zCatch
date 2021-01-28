@@ -22,12 +22,12 @@ func init() {
 	var env map[string]string
 	env, err := godotenv.Read()
 	if err != nil {
-		log.Fatalf("Failed to get environment variables: %s", err)
+		log.Fatalf("Failed to get environment variables: %s\n", err)
 	}
 
 	err = configo.Parse(config, env)
 	if err != nil {
-		log.Fatalf("Invalid configutaion parameters provided:\n%s", err)
+		log.Fatalf("Invalid configutaion parameters provided: %s\n", err)
 	}
 }
 
@@ -47,7 +47,7 @@ func main() {
 		log.Fatalln("Failed to set: ec_output_level 2")
 	}
 
-	publisher, err := mqtt.NewPublisher(config.BrokerAddress, config.EconAddress+"monitor-publisher", "")
+	publisher, err := mqtt.NewPublisher(config.BrokerAddress, config.EconAddress, "")
 	if err != nil {
 		log.Fatalf("Failed to connect to broker %s: %s", config.BrokerAddress, err)
 	}
