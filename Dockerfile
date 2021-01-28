@@ -7,7 +7,7 @@ RUN apk --update add git openssh && \
     rm /var/cache/apk/*
 
 WORKDIR /build
-COPY *.go ./
+COPY . ./
 COPY go.* ./
 
 ENV CGO_ENABLED=0
