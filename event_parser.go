@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/Teeworlds-Server-Moderation/common/mqtt"
-	"github.com/Teeworlds-Server-Moderation/monitor-zCatch/parse"
+	"github.com/Teeworlds-Server-Moderation/monitor-zcatch/parse"
 )
 
 var (

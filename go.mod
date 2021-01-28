@@ -1,4 +1,4 @@
-module github.com/Teeworlds-Server-Moderation/monitor-zCatch
+module github.com/Teeworlds-Server-Moderation/monitor-zcatch
 
 go 1.15
 

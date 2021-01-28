@@ -13,7 +13,7 @@ COPY go.* ./
 ENV CGO_ENABLED=0
 ENV GOOS=linux 
 
-RUN go get -d && go build -a -ldflags '-w -extldflags "-static"' -o monitor-zCatch .
+RUN go get -d && go build -a -ldflags '-w -extldflags "-static"' -o monitor-zcatch .
 
 
 FROM alpine:latest as minimal
@@ -25,6 +25,6 @@ ENV MONITOR_ECON_PASSWORD=""
 
 
 WORKDIR /app
-COPY --from=build /build/monitor-zCatch .
+COPY --from=build /build/monitor-zcatch .
 VOLUME ["/data"]
-ENTRYPOINT ["/app/monitor-zCatch"]
+ENTRYPOINT ["/app/monitor-zcatch"]
