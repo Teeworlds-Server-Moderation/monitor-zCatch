@@ -70,7 +70,7 @@ func main() {
 	// There are two topics that the monitor currently listens on, the first one being the
 	// "IP:Port" topic, where individual messages can be received and the second topic being the
 	// broadcast topic that multicasts one message to all subscribing monitors.
-	go requestProcessor(subscriber, conn)
+	go requestProcessor(subscriber, publisher, conn)
 
 	// Messages will be delivered asynchronously so we just need to wait for a signal to shutdown
 	sig := make(chan os.Signal, 1)

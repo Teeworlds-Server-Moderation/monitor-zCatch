@@ -8,7 +8,7 @@ import (
 	"github.com/jxsl13/twapi/econ"
 )
 
-func requestProcessor(subscriber *mqtt.Subscriber, conn *econ.Conn) {
+func requestProcessor(subscriber *mqtt.Subscriber, publisher *mqtt.Publisher, conn *econ.Conn) {
 	base := events.BaseEvent{}
 	for msg := range subscriber.Next() {
 		err := base.Unmarshal(msg.Payload)
