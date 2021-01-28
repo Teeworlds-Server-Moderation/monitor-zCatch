@@ -18,8 +18,8 @@ func requestProcessor(subscriber *mqtt.Subscriber, publisher *mqtt.Publisher, co
 		}
 
 		switch base.Type {
-		case events.TypeCommandExec:
-			event := events.NewCommandExecEvent()
+		case events.TypeRequestCommandExec:
+			event := events.NewRequestCommandExecEvent()
 			err = event.Unmarshal(msg.Payload)
 			if err != nil {
 				log.Printf("Failed to unmarshal expected request event type: %s:%s\n", base.Type, err)
