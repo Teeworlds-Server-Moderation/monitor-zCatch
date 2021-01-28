@@ -8,9 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	env "github.com/Teeworlds-Server-Moderation/common/env"
 	"github.com/Teeworlds-Server-Moderation/common/mqtt"
-	"github.com/joho/godotenv"
-	configo "github.com/jxsl13/simple-configo"
 	"github.com/jxsl13/twapi/econ"
 )
 
@@ -19,15 +18,9 @@ var (
 )
 
 func init() {
-	var env map[string]string
-	env, err := godotenv.Read()
+	err := env.Parse(config)
 	if err != nil {
 		log.Fatalf("Failed to get environment variables: %s\n", err)
-	}
-
-	err = configo.Parse(config, env)
-	if err != nil {
-		log.Fatalf("Invalid configutaion parameters provided: %s\n", err)
 	}
 }
 

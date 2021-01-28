@@ -28,8 +28,6 @@ func (c *Config) Name() (name string) {
 // config object
 func (c *Config) Options() (options configo.Options) {
 
-	// NOTE: delimiter is parsed before the other values, this order is important,
-	// as the delimiter is used afterwards.
 	optionsList := configo.Options{
 		{
 			Key:           "MONITOR_ECON_ADDRESS",
