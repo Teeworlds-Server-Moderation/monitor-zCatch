@@ -11,7 +11,7 @@ import (
 var (
 	// [2020-05-22 23:01:09][client_enter]: id=0 addr=192.168.178.25:64139 version=1796 name='MisterFister:(' clan='FistingTea`' country=-1
 	// 0: full 1: timestamp 2: log level 3: log line
-	initialLoglevelRegex = regexp.MustCompile(`\[([\d -:]+)\]\[([^:]+)\]: (.+)$`)
+	initialLoglevelRegex = regexp.MustCompile(`^\[([\d\s-:]+)\]\[([^:]+)\]: (.+)$`)
 
 	// dummy used as empty return value
 	emptyMsg = mqtt.Message{}
