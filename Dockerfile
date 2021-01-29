@@ -19,12 +19,8 @@ RUN go get -d && go build -a -ldflags '-w -extldflags "-static"' -o monitor-zcat
 FROM alpine:latest as minimal
 
 ENV MONITOR_BROKER_ADDRESS=tcp://mosquitto:1883
-ENV MONITOR_ECON_ADDRESS=localhost:9303
-ENV MONITOR_ECON_PASSWORD=""
-
-
 
 WORKDIR /app
 COPY --from=build /build/monitor-zcatch .
-VOLUME ["/data"]
+VOLUME ["/data", "/app/.env"]
 ENTRYPOINT ["/app/monitor-zcatch"]
