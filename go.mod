@@ -2,7 +2,9 @@ module github.com/Teeworlds-Server-Moderation/monitor-zcatch
 
 go 1.15
 
-replace github.com/Teeworlds-Server-Moderation/monitor-zcatch/parse => ./parse
+replace (
+github.com/Teeworlds-Server-Moderation/monitor-zcatch/ => ./
+)
 
 require (
 	github.com/Teeworlds-Server-Moderation/common v0.5.1
