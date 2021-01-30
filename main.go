@@ -45,7 +45,7 @@ func main() {
 		log.Fatalf("Failed to connect to broker %s: %s", config.BrokerAddress, err)
 	}
 
-	subscriber, err := mqtt.NewSubscriber(config.BrokerAddress, config.EconAddress, mqtt.TopicBroadcast)
+	subscriber, err := mqtt.NewSubscriber(config.BrokerAddress, config.EconAddress, config.EconAddress, mqtt.TopicBroadcast)
 	if err != nil {
 		log.Fatalf("Failed to connect to broker %s: %s", config.BrokerAddress, err)
 	}

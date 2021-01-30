@@ -44,7 +44,7 @@ func (c *Config) Options() (options configo.Options) {
 		{
 			Key:           "MONITOR_BROKER_ADDRESS",
 			Description:   "The address of your broker in the form tcp://mosquitto:1883",
-			DefaultValue:  "tcp://mosquitto:1883",
+			DefaultValue:  "tcp://localhost:1883",
 			ParseFunction: configo.DefaultParserRegex(&c.BrokerAddress, brokerAddressRegex, "Please provide a valid 'tcp://IP:Port address'"),
 		},
 	}
