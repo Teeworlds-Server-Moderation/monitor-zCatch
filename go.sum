@@ -1,5 +1,5 @@
-github.com/Teeworlds-Server-Moderation/common v0.5.0 h1:M3ny6Wn2JaaMuKqP9UK3dJ898fYe2CNr2ja+SVJlvvM=
-github.com/Teeworlds-Server-Moderation/common v0.5.0/go.mod h1:/aqTgOCcl3Qc0MvRmpcNTCAriOTK0Dlo7cYs4C66i04=
+github.com/Teeworlds-Server-Moderation/common v0.5.1 h1:9PwO97MoHgbBVvH1F+mqsD5dIl3GhaSuvWGL0eW0Yfg=
+github.com/Teeworlds-Server-Moderation/common v0.5.1/go.mod h1:/aqTgOCcl3Qc0MvRmpcNTCAriOTK0Dlo7cYs4C66i04=
 github.com/eclipse/paho.mqtt.golang v1.3.1 h1:6F5FYb1hxVSZS+p0ji5xBQamc5ltOolTYRy5R15uVmI=
 github.com/eclipse/paho.mqtt.golang v1.3.1/go.mod h1:eTzb4gxwwyWpqBUHGQZ4ABAV7+Jgm1PklsYT/eo8Hcc=
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
