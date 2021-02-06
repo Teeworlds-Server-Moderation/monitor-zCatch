@@ -55,7 +55,9 @@ func main() {
 
 	// Connects to the Teeworlds server and reads lines an dpushes them into
 	// the lineChan channel (buffered channel)
-	go econLineReader(ctx, conn, lineChan)
+	// cancel is able to close the whole application, as it might make no sense to
+	// continue rrunning when there is no input data provided
+	go econLineReader(ctx, cancel, conn, lineChan)
 	// receives those lines in the lineChan channel and parses them in order to create events
 	// that are then pushed to their corresponding broker topics
 	go eventProducerRoutine(ctx, config.EconAddress, lineChan, publisher)
