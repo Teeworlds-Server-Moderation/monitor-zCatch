@@ -27,7 +27,7 @@ func init() {
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	conn, err := econ.DialTo(config.EconAddress, config.Password)
+	conn, err := econ.New(config.EconAddress, config.Password)
 	if err != nil {
 		log.Fatalf("Failed to connect to or authenticate at %s: %s", config.EconAddress, err)
 	}

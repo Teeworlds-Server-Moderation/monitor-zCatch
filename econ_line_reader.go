@@ -19,8 +19,9 @@ func econLineReader(ctx context.Context, conn *econ.Conn, lChan chan string) {
 			if err != nil {
 				log.Println("Failed to read line: ", err)
 				time.Sleep(time.Second)
-				continue
+				return
 			}
+			// push read line int channel
 			lChan <- line
 		}
 	}
