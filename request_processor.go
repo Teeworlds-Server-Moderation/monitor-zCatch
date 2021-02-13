@@ -3,24 +3,32 @@ package main
 import (
 	"log"
 
+	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	"github.com/Teeworlds-Server-Moderation/common/events"
-	"github.com/Teeworlds-Server-Moderation/common/mqtt"
 	"github.com/jxsl13/twapi/econ"
 )
 
-func requestProcessor(subscriber *mqtt.Subscriber, publisher *mqtt.Publisher, conn *econ.Conn) {
+func requestProcessor(cfg *Config, subscriber *amqp.Subscriber, publisher *amqp.Publisher, conn *econ.Conn) {
+
 	base := events.BaseEvent{}
-	for msg := range subscriber.Next() {
-		err := base.Unmarshal(msg.Payload)
+
+	next, err := subscriber.Consume(cfg.EconAddress)
+	if err != nil {
+		log.Fatalf("Failed to consume from queue %s, closing.", cfg.EconAddress)
+	}
+
+	for msg := range next {
+		payload := string(msg.Body)
+		err := base.Unmarshal(payload)
 		if err != nil {
-			log.Printf("Failed to unmarshal BaseEvent(%s): %s\n", msg.Topic, msg.Payload)
+			log.Printf("Failed to unmarshal BaseEvent(%s): %s\n", cfg.EconAddress, payload)
 			continue
 		}
 
 		switch base.Type {
 		case events.TypeRequestCommandExec:
 			event := events.NewRequestCommandExecEvent()
-			err = event.Unmarshal(msg.Payload)
+			err = event.Unmarshal(payload)
 			if err != nil {
 				log.Printf("Failed to unmarshal expected request event type: %s:%s\n", base.Type, err)
 				continue

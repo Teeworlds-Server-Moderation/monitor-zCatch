@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	"github.com/Teeworlds-Server-Moderation/common/dto"
 	"github.com/Teeworlds-Server-Moderation/common/events"
-	"github.com/Teeworlds-Server-Moderation/common/mqtt"
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 	startVoteOptionRegex = regexp.MustCompile(`'([\d]{1,2}):(.*)' voted option '(.+)' reason='(.{1,20})' cmd='(.+)' force=([\d])`)
 )
 
-func StartVoteOption(source, timestamp, logLine string) (mqtt.Message, error) {
+func StartVoteOption(source, timestamp, logLine string) (amqp.Message, error) {
 	match := startVoteOptionRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
 		return emptyMsg, fmt.Errorf("Invalid StartVoteOption line format: %s", logLine)
@@ -41,8 +41,8 @@ func StartVoteOption(source, timestamp, logLine string) (mqtt.Message, error) {
 
 	voteSpecStartEvent.Forced = forced != 0
 
-	msg := mqtt.Message{
-		Topic:   events.TypeVoteKickStarted,
+	msg := amqp.Message{
+		Queue:   events.TypeVoteKickStarted,
 		Payload: voteSpecStartEvent.Marshal(),
 	}
 	return msg, nil

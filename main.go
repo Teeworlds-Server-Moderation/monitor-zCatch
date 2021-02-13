@@ -8,31 +8,36 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	env "github.com/Teeworlds-Server-Moderation/common/env"
-	"github.com/Teeworlds-Server-Moderation/common/mqtt"
 	"github.com/jxsl13/twapi/econ"
 )
 
 var (
-	config = &Config{}
+	cfg = &Config{}
 )
 
 func init() {
-	err := env.Parse(config)
+	err := env.Parse(cfg)
 	if err != nil {
 		log.Fatalf("Failed to get environment variables: %s\n", err)
 	}
 }
 
+func brokerCredentials(c *Config) (address, username, password string) {
+	return cfg.BrokerAddress, cfg.BrokerUsername, cfg.BrokerPassword
+}
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	conn, err := econ.New(config.EconAddress, config.Password)
+
+	conn, err := econ.New(cfg.EconAddress, cfg.EconPassword)
 	if err != nil {
-		log.Fatalf("Failed to connect to or authenticate at %s: %s", config.EconAddress, err)
+		log.Fatalf("Failed to connect to or authenticate at %s: %s", cfg.EconAddress, err)
 	}
 	defer conn.Close()
-	log.Println("Successfully connected to Econ: ", config.EconAddress)
+	log.Println("Successfully connected to Econ: ", cfg.EconAddress)
 
 	// Make logging more verbose in order to get more information
 	err = conn.WriteLine("ec_output_level 2")
@@ -40,14 +45,14 @@ func main() {
 		log.Fatalln("Failed to set: ec_output_level 2")
 	}
 
-	publisher, err := mqtt.NewPublisher(config.BrokerAddress, config.EconAddress, "")
+	publisher, err := amqp.NewPublisher(brokerCredentials(cfg))
 	if err != nil {
-		log.Fatalf("Failed to connect to broker %s: %s", config.BrokerAddress, err)
+		log.Fatalf("Failed to connect to broker %s: %s", cfg.BrokerAddress, err)
 	}
 
-	subscriber, err := mqtt.NewSubscriber(config.BrokerAddress, config.EconAddress, config.EconAddress, mqtt.TopicBroadcast)
+	subscriber, err := amqp.NewSubscriber(brokerCredentials(cfg))
 	if err != nil {
-		log.Fatalf("Failed to connect to broker %s: %s", config.BrokerAddress, err)
+		log.Fatalf("Failed to connect to broker %s: %s", cfg.BrokerAddress, err)
 	}
 
 	// buffered channel, blocks when full.
@@ -60,12 +65,12 @@ func main() {
 	go econLineReader(ctx, cancel, conn, lineChan)
 	// receives those lines in the lineChan channel and parses them in order to create events
 	// that are then pushed to their corresponding broker topics
-	go eventProducerRoutine(ctx, config.EconAddress, lineChan, publisher)
+	go eventProducerRoutine(ctx, cfg.EconAddress, lineChan, publisher)
 
 	// There are two topics that the monitor currently listens on, the first one being the
 	// "IP:Port" topic, where individual messages can be received and the second topic being the
 	// broadcast topic that multicasts one message to all subscribing monitors.
-	go requestProcessor(subscriber, publisher, conn)
+	go requestProcessor(cfg, subscriber, publisher, conn)
 
 	// Messages will be delivered asynchronously so we just need to wait for a signal to shutdown
 	sig := make(chan os.Signal, 1)

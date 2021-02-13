@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	"github.com/Teeworlds-Server-Moderation/common/events"
-	"github.com/Teeworlds-Server-Moderation/common/mqtt"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 
 // PlayerLeft parses potential leaving players with as much information as possible.
 // Any empty struct field will be set to the default empty value.
-func PlayerLeft(source, timestamp, logLine string) (mqtt.Message, error) {
+func PlayerLeft(source, timestamp, logLine string) (amqp.Message, error) {
 	match := playerLeftRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
 		return emptyMsg, fmt.Errorf("Invalid PlayerLeft line format: %s", logLine)
@@ -32,8 +32,8 @@ func PlayerLeft(source, timestamp, logLine string) (mqtt.Message, error) {
 	playerLeftEvent.Player = player
 	playerLeftEvent.Reason = reason
 
-	msg := mqtt.Message{
-		Topic:   events.TypePlayerLeft,
+	msg := amqp.Message{
+		Queue:   events.TypePlayerLeft,
 		Payload: playerLeftEvent.Marshal(),
 	}
 	return msg, nil

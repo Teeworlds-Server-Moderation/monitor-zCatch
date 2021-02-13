@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/Teeworlds-Server-Moderation/common/mqtt"
+	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	"github.com/Teeworlds-Server-Moderation/monitor-zcatch/parse"
 )
 
@@ -14,11 +14,11 @@ var (
 	initialLoglevelRegex = regexp.MustCompile(`^\[([\d\s-:]+)\]\[([^:]+)\]: (.+)$`)
 
 	// dummy used as empty return value
-	emptyMsg = mqtt.Message{}
+	emptyMsg = amqp.Message{}
 )
 
 // returns a message or an error in case something went wrong
-func parseEvent(source, line string) (mqtt.Message, error) {
+func parseEvent(source, line string) (amqp.Message, error) {
 	matches := initialLoglevelRegex.FindStringSubmatch(line)
 	if len(matches) == 0 {
 		return emptyMsg, fmt.Errorf("[ERROR] Unknown line format: %s", line)

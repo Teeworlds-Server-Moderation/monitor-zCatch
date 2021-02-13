@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	"github.com/Teeworlds-Server-Moderation/common/dto"
 	"github.com/Teeworlds-Server-Moderation/common/events"
-	"github.com/Teeworlds-Server-Moderation/common/mqtt"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 
 // PlayerJoined parsing and creation of the corresponding event JSON struct,
 // as well as marshalling that struct into a message payload.
-func PlayerJoined(source, timestamp, logLine string) (mqtt.Message, error) {
+func PlayerJoined(source, timestamp, logLine string) (amqp.Message, error) {
 	match := playerEnteredRegex.FindStringSubmatch(logLine)
 	if len(match) != 8 {
 		return emptyMsg, fmt.Errorf("Invalid PlayerJoined line format: %s", logLine)
@@ -45,8 +45,8 @@ func PlayerJoined(source, timestamp, logLine string) (mqtt.Message, error) {
 	playerJoinEvent.Player = player
 	ServerState.PlayerJoin(id, player)
 
-	msg := mqtt.Message{
-		Topic:   events.TypePlayerJoined,
+	msg := amqp.Message{
+		Queue:   events.TypePlayerJoined,
 		Payload: playerJoinEvent.Marshal(),
 	}
 	return msg, nil
