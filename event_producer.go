@@ -23,7 +23,8 @@ func eventProducerRoutine(ctx context.Context, source string, lineChan chan stri
 				log.Printf("Skipped: %s\n", line)
 				continue
 			}
-			if err := publisher.Publish(msg.Queue, msg.Payload); err != nil {
+			// publish to exchange
+			if err := publisher.Publish(msg.Queue, "", msg.Payload); err != nil {
 				log.Printf("Error: %s\nError: %s\n", line, err)
 				continue
 			}

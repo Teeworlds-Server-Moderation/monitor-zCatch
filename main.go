@@ -10,50 +10,112 @@ import (
 
 	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	env "github.com/Teeworlds-Server-Moderation/common/env"
+	"github.com/Teeworlds-Server-Moderation/common/events"
+	"github.com/Teeworlds-Server-Moderation/common/topics"
 	"github.com/jxsl13/twapi/econ"
 )
 
 var (
-	cfg = &Config{}
+	cfg        = &Config{}
+	ctx        context.Context
+	cancel     func()
+	conn       *econ.Conn
+	publisher  *amqp.Publisher
+	subscriber *amqp.Subscriber
 )
+
+func brokerCredentials(c *Config) (address, username, password string) {
+	return c.BrokerAddress, c.BrokerUsername, c.BrokerPassword
+}
+
+// ExchangeCreator can be publisher or subscriber
+type ExchangeCreator interface {
+	CreateExchange(string) error
+}
+
+// QueueCreateBinder creates queues and binds them to exchanges
+type QueueCreateBinder interface {
+	CreateQueue(queue string) error
+	BindQueue(queue, exchange string) error
+}
+
+func createExchanges(ec ExchangeCreator, exchanges ...string) {
+	for _, exchange := range exchanges {
+		if err := ec.CreateExchange(exchange); err != nil {
+			log.Fatalf("Failed to create exchange '%s': %v\n", exchange, err)
+		}
+	}
+}
+
+func createQueueAndBindToExchanges(qcb QueueCreateBinder, queue string, exchanges ...string) {
+	if err := qcb.CreateQueue(queue); err != nil {
+		log.Fatalf("Failed to create queue '%s'\n", queue)
+	}
+
+	for _, exchange := range exchanges {
+		if err := qcb.BindQueue(queue, exchange); err != nil {
+			log.Fatalf("Failed to bind queue '%s' to exchange '%s'\n", queue, exchange)
+		}
+
+	}
+
+}
 
 func init() {
 	err := env.Parse(cfg)
 	if err != nil {
 		log.Fatalf("Failed to get environment variables: %s\n", err)
 	}
-}
 
-func brokerCredentials(c *Config) (address, username, password string) {
-	return cfg.BrokerAddress, cfg.BrokerUsername, cfg.BrokerPassword
-}
+	// context
+	ctx, cancel = context.WithCancel(context.Background())
 
-func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	conn, err := econ.New(cfg.EconAddress, cfg.EconPassword)
+	// econ connection
+	conn, err = econ.New(cfg.EconAddress, cfg.EconPassword)
 	if err != nil {
 		log.Fatalf("Failed to connect to or authenticate at %s: %s", cfg.EconAddress, err)
 	}
-	defer conn.Close()
-	log.Println("Successfully connected to Econ: ", cfg.EconAddress)
 
 	// Make logging more verbose in order to get more information
 	err = conn.WriteLine("ec_output_level 2")
 	if err != nil {
 		log.Fatalln("Failed to set: ec_output_level 2")
 	}
+	log.Println("Successfully connected to Econ: ", cfg.EconAddress)
 
-	publisher, err := amqp.NewPublisher(brokerCredentials(cfg))
+	publisher, err = amqp.NewPublisher(brokerCredentials(cfg))
 	if err != nil {
 		log.Fatalf("Failed to connect to broker %s: %s", cfg.BrokerAddress, err)
 	}
 
-	subscriber, err := amqp.NewSubscriber(brokerCredentials(cfg))
+	subscriber, err = amqp.NewSubscriber(brokerCredentials(cfg))
 	if err != nil {
 		log.Fatalf("Failed to connect to broker %s: %s", cfg.BrokerAddress, err)
 	}
+
+	// exchanges that the publisher uses and publishes messages to
+	createExchanges(
+		publisher,
+		events.TypePlayerJoined,
+		events.TypePlayerLeft,
+		events.TypePlayerLeft,
+	)
+
+	// exchanges that the subscriber uses
+	createExchanges(
+		subscriber,
+		topics.Broadcast,
+	)
+
+	// get all messages from broadcast
+	createQueueAndBindToExchanges(subscriber, cfg.EconAddress, topics.Broadcast)
+}
+
+func main() {
+	defer cancel()
+	defer conn.Close()
+	defer publisher.Close()
+	defer subscriber.Close()
 
 	// buffered channel, blocks when full.
 	lineChan := make(chan string, 64)
