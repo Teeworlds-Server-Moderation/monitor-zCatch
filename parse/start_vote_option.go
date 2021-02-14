@@ -32,7 +32,7 @@ func StartVoteOption(source, timestamp, logLine string) (amqp.Message, error) {
 	forced, _ := strconv.Atoi(match[6])
 
 	voteSpecStartEvent := events.NewVoteSpecStartedEvent()
-	voteSpecStartEvent.Timestamp = timestamp
+	voteSpecStartEvent.Timestamp = formatedTimestamp()
 	voteSpecStartEvent.EventSource = source
 	voteSpecStartEvent.Source = dto.Player{
 		ID:   id,

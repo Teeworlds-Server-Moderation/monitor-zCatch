@@ -34,7 +34,7 @@ func StartVoteKick(source, timestamp, logLine string) (amqp.Message, error) {
 	forced, _ := strconv.Atoi(match[7])
 
 	voteKickStartEvent := events.NewVoteKickStartedEvent()
-	voteKickStartEvent.Timestamp = timestamp
+	voteKickStartEvent.Timestamp = formatedTimestamp()
 	voteKickStartEvent.EventSource = source
 	voteKickStartEvent.Source = dto.Player{
 		ID:   idVoter,

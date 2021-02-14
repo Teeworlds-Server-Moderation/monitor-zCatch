@@ -29,7 +29,7 @@ func PlayerJoined(source, timestamp, logLine string) (amqp.Message, error) {
 	version, _ := strconv.Atoi(match[4])
 
 	playerJoinEvent := events.NewPlayerJoinedEvent()
-	playerJoinEvent.Timestamp = timestamp
+	playerJoinEvent.Timestamp = formatedTimestamp()
 	playerJoinEvent.EventSource = source
 
 	player := dto.Player{

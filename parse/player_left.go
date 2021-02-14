@@ -26,7 +26,7 @@ func PlayerLeft(source, timestamp, logLine string) (amqp.Message, error) {
 
 	playerLeftEvent := events.NewPlayerLeftEvent()
 	playerLeftEvent.EventSource = source
-	playerLeftEvent.Timestamp = timestamp
+	playerLeftEvent.Timestamp = formatedTimestamp()
 
 	player := ServerState.PlayerLeave(id)
 	playerLeftEvent.Player = player
