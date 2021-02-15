@@ -17,7 +17,7 @@ func requestProcessor(cfg *Config, subscriber *amqp.Subscriber, publisher *amqp.
 		log.Fatalf("Failed to consume from queue %s, closing.", cfg.EconAddress)
 	}
 
-	for msg, ok := <-next {
+	for msg, ok := <-next; ; msg, ok = <-next {
 		if !ok {
 			next, err = subscriber.Consume(cfg.EconAddress)
 			if err != nil {
