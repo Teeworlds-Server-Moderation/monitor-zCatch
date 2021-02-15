@@ -10,6 +10,7 @@ import (
 )
 
 func econLineReader(ctx context.Context, cancel context.CancelFunc, conn *econ.Conn, lChan chan string) {
+	retries := 0
 	for {
 		line, err := conn.ReadLine()
 		select {
@@ -19,6 +20,10 @@ func econLineReader(ctx context.Context, cancel context.CancelFunc, conn *econ.C
 		default:
 			if errors.Is(err, econ.ErrNetwork) {
 				time.Sleep(time.Second)
+				retries++
+				if retries >= 60 {
+					log.Fatalln("Failed to reestablish econ connection.")
+				}
 				continue
 			} else if err != nil {
 				log.Println("Failed to read line: ", err)
@@ -26,6 +31,8 @@ func econLineReader(ctx context.Context, cancel context.CancelFunc, conn *econ.C
 				cancel()
 				return
 			}
+			// reset retries
+			retries = 0
 			// push read line int channel
 			lChan <- line
 		}

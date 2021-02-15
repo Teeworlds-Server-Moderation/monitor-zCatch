@@ -17,7 +17,13 @@ func requestProcessor(cfg *Config, subscriber *amqp.Subscriber, publisher *amqp.
 		log.Fatalf("Failed to consume from queue %s, closing.", cfg.EconAddress)
 	}
 
-	for msg := range next {
+	for msg, ok := range next {
+		if !ok {
+			next, err = subscriber.Consume(cfg.EconAddress)
+			if err != nil {
+				log.Fatalf("Closing application: could not reconnect requestProcessor: %s", err)
+			}
+		}
 		payload := string(msg.Body)
 		err := base.Unmarshal(payload)
 		if err != nil {
