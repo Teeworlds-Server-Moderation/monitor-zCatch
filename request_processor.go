@@ -17,11 +17,11 @@ func requestProcessor(cfg *Config, subscriber *amqp.Subscriber, publisher *amqp.
 		log.Fatalf("Failed to consume from queue %s, closing.", cfg.EconAddress)
 	}
 
-	for msg, ok := range next {
+	for msg, ok := <-next {
 		if !ok {
 			next, err = subscriber.Consume(cfg.EconAddress)
 			if err != nil {
-				log.Fatalf("Closing application: could not reconnect requestProcessor: %s", err)
+				log.Fatalf("Closing application: could not reconnect requestProcessor to rabbitmq: %s", err)
 			}
 		}
 		payload := string(msg.Body)
