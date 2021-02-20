@@ -1,5 +1,5 @@
-github.com/Teeworlds-Server-Moderation/common v0.6.2 h1:vu8TKPC47G3xnYEpTUGfrHrP0hWw7IuCqlj3t7eCWQ0=
-github.com/Teeworlds-Server-Moderation/common v0.6.2/go.mod h1:u0ttPqN6bGN09IsOrqi7Z/LawzhGaf9v6zTMbugUbNA=
+github.com/Teeworlds-Server-Moderation/common v0.6.3 h1:rtIlTfgXLCkxYxEATc/vUAUKZE5ql11zuXR4XPUyJhs=
+github.com/Teeworlds-Server-Moderation/common v0.6.3/go.mod h1:u0ttPqN6bGN09IsOrqi7Z/LawzhGaf9v6zTMbugUbNA=
 github.com/eclipse/paho.mqtt.golang v1.3.1/go.mod h1:eTzb4gxwwyWpqBUHGQZ4ABAV7+Jgm1PklsYT/eo8Hcc=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
@@ -7,6 +7,8 @@ github.com/joho/godotenv v1.3.0 h1:Zjp+RcGpHhGlrMbJzXTrZZPrWj+1vfm90La1wgB6Bhc=
 github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqxOKXbg=
 github.com/jxsl13/simple-configo v1.2.4 h1:AqP9NusXjX9P+31aP3KnzrioHgMJozExW/AvYzZIDP8=
 github.com/jxsl13/simple-configo v1.2.4/go.mod h1:Msij/FAN06hxwLVz3c5YFCBWus8GULWRbr1IlA3jxpI=
+github.com/jxsl13/simple-configo v1.2.6 h1:0OPD4w5ReYnmortB+JAlPZXpAZgHvtIZBsyY/HU1CgA=
+github.com/jxsl13/simple-configo v1.2.6/go.mod h1:Msij/FAN06hxwLVz3c5YFCBWus8GULWRbr1IlA3jxpI=
 github.com/jxsl13/twapi v1.1.1 h1:SSizagvRDr9Cq2rjK8qlv4mf3ihOC5k7a6HxoCx6ic8=
 github.com/jxsl13/twapi v1.1.1/go.mod h1:IpY3prUieWgDAyua1CezhWESHGh+rc/Rzrco98j+Azg=
 github.com/reiver/go-oi v1.0.0 h1:nvECWD7LF+vOs8leNGV/ww+F2iZKf3EYjYZ527turzM=
