@@ -111,7 +111,29 @@ func init() {
 	)
 
 	// get all messages from broadcast
-	createQueueAndBindToExchanges(subscriber, cfg.EconAddress, topics.Broadcast)
+	createQueueAndBindToExchanges(subscriber,
+		cfg.EconAddress,
+		topics.Broadcast,
+	)
+
+	// persistent queues that contain some debugging an dlogging data
+	createQueueAndBindToExchanges(subscriber,
+		"join-log",
+		events.TypePlayerJoined,
+	)
+
+	createQueueAndBindToExchanges(subscriber,
+		"leave-log",
+		events.TypePlayerLeft,
+	)
+
+	createQueueAndBindToExchanges(subscriber,
+		"vote-log",
+		events.TypeVoteKickStarted,
+		events.TypeVoteSpecStarted,
+		events.TypeVoteOptionStarted,
+	)
+
 }
 
 func main() {
