@@ -17,11 +17,17 @@ var (
 	emptyMsg = amqp.Message{}
 )
 
+var serverLogLevelHandlers = []func(string, string, string) (amqp.Message, error){
+	parse.StartVoteKick,
+	parse.StartVoteSpec,
+	parse.StartVoteOption,
+}
+
 // returns a message or an error in case something went wrong
 func parseEvent(source, line string) (amqp.Message, error) {
 	matches := initialLoglevelRegex.FindStringSubmatch(line)
 	if len(matches) == 0 {
-		return emptyMsg, fmt.Errorf("[ERROR] Unknown line format: %s", line)
+		return emptyMsg, fmt.Errorf("%s: %s", parse.ErrInvalidLineFormat, line)
 	}
 
 	timestamp := matches[1]
@@ -33,7 +39,15 @@ func parseEvent(source, line string) (amqp.Message, error) {
 		return parse.PlayerJoined(source, timestamp, logLine)
 	case "client_drop":
 		return parse.PlayerLeft(source, timestamp, logLine)
-
+	case "server":
+		var err error
+		for _, handler := range serverLogLevelHandlers {
+			msg, err := handler(source, timestamp, logLine)
+			if err == nil {
+				return msg, nil
+			}
+		}
+		return amqp.Message{}, err
 	}
 	return emptyMsg, fmt.Errorf("Unknown log level: %s", logLevel)
 }
