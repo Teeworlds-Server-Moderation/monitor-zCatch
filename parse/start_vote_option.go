@@ -29,6 +29,7 @@ func StartVoteOption(source, timestamp, logLine string) (amqp.Message, error) {
 
 	id, _ := strconv.Atoi(match[1])
 	reason := match[4]
+	option := match[5]
 	forced, _ := strconv.Atoi(match[6])
 
 	event := events.NewVoteOptionStartedEvent()
@@ -36,6 +37,7 @@ func StartVoteOption(source, timestamp, logLine string) (amqp.Message, error) {
 	event.EventSource = source
 	event.Source = ServerState.GetPlayer(id)
 	event.Reason = reason
+	event.Option = option
 	event.Forced = forced != 0
 
 	msg := amqp.Message{
