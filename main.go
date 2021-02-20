@@ -99,6 +99,9 @@ func init() {
 		events.TypePlayerJoined,
 		events.TypePlayerLeft,
 		events.TypePlayerLeft,
+		events.TypeVoteKickStarted,
+		events.TypeVoteSpecStarted,
+		events.TypeVoteOptionStarted,
 	)
 
 	// exchanges that the subscriber uses
