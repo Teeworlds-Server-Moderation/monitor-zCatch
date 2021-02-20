@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/Teeworlds-Server-Moderation/common/amqp"
-	"github.com/Teeworlds-Server-Moderation/common/dto"
 	"github.com/Teeworlds-Server-Moderation/common/events"
 )
 
@@ -26,29 +25,25 @@ var (
 func StartVoteSpec(source, timestamp, logLine string) (amqp.Message, error) {
 	match := startVoteSpecRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
-		return emptyMsg, fmt.Errorf("Invalid StartVoteSpec line format: %s", logLine)
+		return emptyMsg, fmt.Errorf("%w: StartVoteSpec: %s", ErrInvalidLineFormat, logLine)
 	}
 
 	idVoter, _ := strconv.Atoi(match[1])
 	idVictim, _ := strconv.Atoi(match[3])
+	reason := match[5]
 	forced, _ := strconv.Atoi(match[7])
 
-	voteSpecStartEvent := events.NewVoteSpecStartedEvent()
-	voteSpecStartEvent.Timestamp = timestamp
-	voteSpecStartEvent.EventSource = source
-	voteSpecStartEvent.Source = dto.Player{
-		ID:   idVoter,
-		Name: match[2],
-	}
-	voteSpecStartEvent.Target = dto.Player{
-		ID:   idVictim,
-		Name: match[4],
-	}
-	voteSpecStartEvent.Forced = forced != 0
+	event := events.NewVoteSpecStartedEvent()
+	event.Timestamp = timestamp
+	event.EventSource = source
+	event.Source = ServerState.GetPlayer(idVoter)
+	event.Target = ServerState.GetPlayer(idVictim)
+	event.Reason = reason
+	event.Forced = forced != 0
 
 	msg := amqp.Message{
-		Queue:   events.TypeVoteKickStarted,
-		Payload: voteSpecStartEvent.Marshal(),
+		Exchange: event.Type,
+		Payload:  event.Marshal(),
 	}
 	return msg, nil
 }

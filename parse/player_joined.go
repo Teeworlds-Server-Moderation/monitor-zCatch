@@ -21,16 +21,16 @@ var (
 func PlayerJoined(source, timestamp, logLine string) (amqp.Message, error) {
 	match := playerEnteredRegex.FindStringSubmatch(logLine)
 	if len(match) != 8 {
-		return emptyMsg, fmt.Errorf("Invalid PlayerJoined line format: %s", logLine)
+		return emptyMsg, fmt.Errorf("%w: PlayerJoined: %s", ErrInvalidLineFormat, logLine)
 	}
 	port, _ := strconv.Atoi(match[3])
 	id, _ := strconv.Atoi(match[1])
 	country, _ := strconv.Atoi(match[7])
 	version, _ := strconv.Atoi(match[4])
 
-	playerJoinEvent := events.NewPlayerJoinedEvent()
-	playerJoinEvent.Timestamp = formatedTimestamp()
-	playerJoinEvent.EventSource = source
+	event := events.NewPlayerJoinedEvent()
+	event.Timestamp = formatedTimestamp()
+	event.EventSource = source
 
 	player := dto.Player{
 		Name:    match[5],
@@ -42,12 +42,12 @@ func PlayerJoined(source, timestamp, logLine string) (amqp.Message, error) {
 		Version: version,
 	}
 
-	playerJoinEvent.Player = player
+	event.Player = player
 	ServerState.PlayerJoin(id, player)
 
 	msg := amqp.Message{
-		Queue:   events.TypePlayerJoined,
-		Payload: playerJoinEvent.Marshal(),
+		Exchange: event.Type,
+		Payload:  event.Marshal(),
 	}
 	return msg, nil
 }

@@ -19,22 +19,22 @@ var (
 func PlayerLeft(source, timestamp, logLine string) (amqp.Message, error) {
 	match := playerLeftRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
-		return emptyMsg, fmt.Errorf("Invalid PlayerLeft line format: %s", logLine)
+		return emptyMsg, fmt.Errorf("%w: PlayerLeft: %s", ErrInvalidLineFormat, logLine)
 	}
 	id, _ := strconv.Atoi(match[1])
 	reason := match[3]
 
-	playerLeftEvent := events.NewPlayerLeftEvent()
-	playerLeftEvent.EventSource = source
-	playerLeftEvent.Timestamp = formatedTimestamp()
+	event := events.NewPlayerLeftEvent()
+	event.EventSource = source
+	event.Timestamp = formatedTimestamp()
 
 	player := ServerState.PlayerLeave(id)
-	playerLeftEvent.Player = player
-	playerLeftEvent.Reason = reason
+	event.Player = player
+	event.Reason = reason
 
 	msg := amqp.Message{
-		Queue:   events.TypePlayerLeft,
-		Payload: playerLeftEvent.Marshal(),
+		Exchange: event.Type,
+		Payload:  event.Marshal(),
 	}
 	return msg, nil
 }
