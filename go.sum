@@ -9,8 +9,6 @@ github.com/jxsl13/simple-configo v1.2.4 h1:AqP9NusXjX9P+31aP3KnzrioHgMJozExW/AvY
 github.com/jxsl13/simple-configo v1.2.4/go.mod h1:Msij/FAN06hxwLVz3c5YFCBWus8GULWRbr1IlA3jxpI=
 github.com/jxsl13/simple-configo v1.2.6 h1:0OPD4w5ReYnmortB+JAlPZXpAZgHvtIZBsyY/HU1CgA=
 github.com/jxsl13/simple-configo v1.2.6/go.mod h1:Msij/FAN06hxwLVz3c5YFCBWus8GULWRbr1IlA3jxpI=
-github.com/jxsl13/twapi v1.1.1 h1:SSizagvRDr9Cq2rjK8qlv4mf3ihOC5k7a6HxoCx6ic8=
-github.com/jxsl13/twapi v1.1.1/go.mod h1:IpY3prUieWgDAyua1CezhWESHGh+rc/Rzrco98j+Azg=
 github.com/jxsl13/twapi v1.1.2 h1:4tZfnC2LHIYCOpELW5MAFmjzM+HlGce2R+3xmqXJHLI=
 github.com/jxsl13/twapi v1.1.2/go.mod h1:IpY3prUieWgDAyua1CezhWESHGh+rc/Rzrco98j+Azg=
 github.com/reiver/go-oi v1.0.0 h1:nvECWD7LF+vOs8leNGV/ww+F2iZKf3EYjYZ527turzM=
