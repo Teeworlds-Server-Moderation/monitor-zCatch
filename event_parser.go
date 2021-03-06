@@ -17,17 +17,33 @@ var (
 	emptyMsg = amqp.Message{}
 )
 
-var serverLogLevelHandlers = []func(string, string, string) (amqp.Message, error){
+// different handler functions that handle specific
+var serverLogLevelHandlers = []func(string, string, string) ([]amqp.Message, error){
+	parse.MapChange,
 	parse.StartVoteKick,
 	parse.StartVoteSpec,
 	parse.StartVoteOption,
 }
 
+var gameLogLevelHandlers = []func(string, string, string) (amqp.Message, error){}
+
+// handle allows the homogenous handling of the above defined paarser function lists
+func handle(source, timestamp, logLine string, parserList []func(string, string, string) ([]amqp.Message, error)) ([]amqp.Message, error) {
+	var err error
+	for _, handler := range parserList {
+		msg, err := handler(source, timestamp, logLine)
+		if err == nil {
+			return msg, nil
+		}
+	}
+	return nil, err
+}
+
 // returns a message or an error in case something went wrong
-func parseEvent(source, line string) (amqp.Message, error) {
+func parseEvent(source, line string) ([]amqp.Message, error) {
 	matches := initialLoglevelRegex.FindStringSubmatch(line)
 	if len(matches) == 0 {
-		return emptyMsg, fmt.Errorf("%s: %s", parse.ErrInvalidLineFormat, line)
+		return nil, fmt.Errorf("%s: %s", parse.ErrInvalidLineFormat, line)
 	}
 
 	timestamp := matches[1]
@@ -40,14 +56,7 @@ func parseEvent(source, line string) (amqp.Message, error) {
 	case "client_drop":
 		return parse.PlayerLeft(source, timestamp, logLine)
 	case "server":
-		var err error
-		for _, handler := range serverLogLevelHandlers {
-			msg, err := handler(source, timestamp, logLine)
-			if err == nil {
-				return msg, nil
-			}
-		}
-		return amqp.Message{}, err
+		return handle(source, timestamp, logLine, serverLogLevelHandlers)
 	}
-	return emptyMsg, fmt.Errorf("Unknown log level: %s", logLevel)
+	return nil, fmt.Errorf("Unknown log level: %s", logLevel)
 }

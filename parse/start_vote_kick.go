@@ -22,10 +22,11 @@ var (
 	startVoteKickRegex = regexp.MustCompile(`'([\d]{1,2}):(.*)' voted kick '([\d]{1,2}):(.*)' reason='(.{1,20})' cmd='(.*)' force=([\d])`)
 )
 
-func StartVoteKick(source, timestamp, logLine string) (amqp.Message, error) {
+// StartVoteKick returns event messages when the logLine contains the proper line.
+func StartVoteKick(source, timestamp, logLine string) ([]amqp.Message, error) {
 	match := startVoteKickRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
-		return emptyMsg, fmt.Errorf("%w: StartVoteKick: %s", ErrInvalidLineFormat, logLine)
+		return nil, fmt.Errorf("%w: StartVoteKick: %s", ErrInvalidLineFormat, logLine)
 	}
 
 	idVoter, _ := strconv.Atoi(match[1])
@@ -34,8 +35,8 @@ func StartVoteKick(source, timestamp, logLine string) (amqp.Message, error) {
 	forced, _ := strconv.Atoi(match[7])
 
 	event := events.NewVoteKickStartedEvent()
-	event.Timestamp = formatedTimestamp()
-	event.EventSource = source
+	event.SetEventSource(source)
+
 	event.Source = ServerState.GetPlayer(idVoter)
 	event.Target = ServerState.GetPlayer(idVictim)
 	event.Reason = reason
@@ -45,5 +46,5 @@ func StartVoteKick(source, timestamp, logLine string) (amqp.Message, error) {
 		Exchange: event.Type,
 		Payload:  event.Marshal(),
 	}
-	return msg, nil
+	return toMsgList(msg, nil)
 }

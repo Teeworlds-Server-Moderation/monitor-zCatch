@@ -18,17 +18,20 @@ func eventProducerRoutine(ctx context.Context, source string, lineChan chan stri
 				continue
 			}
 
-			msg, err := parseEvent(source, line)
+			msgs, err := parseEvent(source, line)
 			if err != nil {
 				log.Printf("Skipped: %s\n", line)
 				continue
 			}
-			// publish to exchange
-			if err := publisher.Publish(msg.Exchange, msg.Queue, msg.Payload); err != nil {
-				log.Printf("Error: %s\nError: %s\n", line, err)
-				continue
-			}
 
+			// publish every parsed event
+			for _, msg := range msgs {
+				// publish to exchange
+				if err := publisher.Publish(msg.Exchange, msg.Queue, msg.Payload); err != nil {
+					log.Printf("Error: %s\nError: %s\n", line, err)
+					continue
+				}
+			}
 			log.Printf("Processed: %s\n", line)
 		}
 	}

@@ -22,10 +22,11 @@ var (
 	startVoteSpecRegex = regexp.MustCompile(`'([\d]{1,2}):(.*)' voted spectate '([\d]{1,2}):(.*)' reason='(.{1,20})' cmd='(.*)' force=([\d])`)
 )
 
-func StartVoteSpec(source, timestamp, logLine string) (amqp.Message, error) {
+// StartVoteSpec returns event messages when the logLine contains the proper line.
+func StartVoteSpec(source, timestamp, logLine string) ([]amqp.Message, error) {
 	match := startVoteSpecRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
-		return emptyMsg, fmt.Errorf("%w: StartVoteSpec: %s", ErrInvalidLineFormat, logLine)
+		return nil, fmt.Errorf("%w: StartVoteSpec: %s", ErrInvalidLineFormat, logLine)
 	}
 
 	idVoter, _ := strconv.Atoi(match[1])
@@ -34,8 +35,8 @@ func StartVoteSpec(source, timestamp, logLine string) (amqp.Message, error) {
 	forced, _ := strconv.Atoi(match[7])
 
 	event := events.NewVoteSpecStartedEvent()
-	event.Timestamp = timestamp
-	event.EventSource = source
+	event.SetEventSource(source)
+
 	event.Source = ServerState.GetPlayer(idVoter)
 	event.Target = ServerState.GetPlayer(idVictim)
 	event.Reason = reason
@@ -45,5 +46,5 @@ func StartVoteSpec(source, timestamp, logLine string) (amqp.Message, error) {
 		Exchange: event.Type,
 		Payload:  event.Marshal(),
 	}
-	return msg, nil
+	return toMsgList(msg, nil)
 }

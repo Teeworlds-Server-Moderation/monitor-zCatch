@@ -21,10 +21,11 @@ var (
 	startVoteOptionRegex = regexp.MustCompile(`'([\d]{1,2}):(.*)' voted option '(.+)' reason='(.{1,20})' cmd='(.+)' force=([\d])`)
 )
 
-func StartVoteOption(source, timestamp, logLine string) (amqp.Message, error) {
+// StartVoteOption returns event messages when the logLine contains the proper line.
+func StartVoteOption(source, timestamp, logLine string) ([]amqp.Message, error) {
 	match := startVoteOptionRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
-		return emptyMsg, fmt.Errorf("%w: StartVoteOption: %s", ErrInvalidLineFormat, logLine)
+		return nil, fmt.Errorf("%w: StartVoteOption: %s", ErrInvalidLineFormat, logLine)
 	}
 
 	id, _ := strconv.Atoi(match[1])
@@ -33,8 +34,8 @@ func StartVoteOption(source, timestamp, logLine string) (amqp.Message, error) {
 	forced, _ := strconv.Atoi(match[6])
 
 	event := events.NewVoteOptionStartedEvent()
-	event.Timestamp = formatedTimestamp()
-	event.EventSource = source
+	event.SetEventSource(source)
+
 	event.Source = ServerState.GetPlayer(id)
 	event.Reason = reason
 	event.Option = option
@@ -44,5 +45,5 @@ func StartVoteOption(source, timestamp, logLine string) (amqp.Message, error) {
 		Exchange: event.Type,
 		Payload:  event.Marshal(),
 	}
-	return msg, nil
+	return toMsgList(msg, nil)
 }

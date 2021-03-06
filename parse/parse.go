@@ -2,15 +2,12 @@ package parse
 
 import (
 	"errors"
-	"time"
 
 	"github.com/Teeworlds-Server-Moderation/common/amqp"
 	"github.com/Teeworlds-Server-Moderation/common/concurrent"
 )
 
 var (
-	// dummy used as empty return value
-	emptyMsg = amqp.Message{}
 
 	// ServerState is modified by individual calls to Parsing functions
 	// This state can be retrieved concurrently and will represent the current playerlist
@@ -21,8 +18,9 @@ var (
 )
 
 // Handler is the basic function signature of parser functions
-type Handler []func(string, string, string) (amqp.Message, error)
+type Handler []func(string, string, string) ([]amqp.Message, error)
 
-func formatedTimestamp() string {
-	return time.Now().Format("2006-01-02T15:04:05.999999-07:00")
+// toMsgList creates a list from a single amqp.Message
+func toMsgList(msg amqp.Message, err error) ([]amqp.Message, error) {
+	return []amqp.Message{msg}, err
 }

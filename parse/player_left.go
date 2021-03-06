@@ -16,17 +16,16 @@ var (
 
 // PlayerLeft parses potential leaving players with as much information as possible.
 // Any empty struct field will be set to the default empty value.
-func PlayerLeft(source, timestamp, logLine string) (amqp.Message, error) {
+func PlayerLeft(source, timestamp, logLine string) ([]amqp.Message, error) {
 	match := playerLeftRegex.FindStringSubmatch(logLine)
 	if len(match) == 0 {
-		return emptyMsg, fmt.Errorf("%w: PlayerLeft: %s", ErrInvalidLineFormat, logLine)
+		return nil, fmt.Errorf("%w: PlayerLeft: %s", ErrInvalidLineFormat, logLine)
 	}
 	id, _ := strconv.Atoi(match[1])
 	reason := match[3]
 
 	event := events.NewPlayerLeftEvent()
-	event.EventSource = source
-	event.Timestamp = formatedTimestamp()
+	event.SetEventSource(source)
 
 	player := ServerState.PlayerLeave(id)
 	event.Player = player
@@ -36,5 +35,5 @@ func PlayerLeft(source, timestamp, logLine string) (amqp.Message, error) {
 		Exchange: event.Type,
 		Payload:  event.Marshal(),
 	}
-	return msg, nil
+	return toMsgList(msg, nil)
 }

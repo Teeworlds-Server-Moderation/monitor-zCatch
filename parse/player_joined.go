@@ -18,10 +18,10 @@ var (
 
 // PlayerJoined parsing and creation of the corresponding event JSON struct,
 // as well as marshalling that struct into a message payload.
-func PlayerJoined(source, timestamp, logLine string) (amqp.Message, error) {
+func PlayerJoined(source, timestamp, logLine string) ([]amqp.Message, error) {
 	match := playerEnteredRegex.FindStringSubmatch(logLine)
 	if len(match) != 8 {
-		return emptyMsg, fmt.Errorf("%w: PlayerJoined: %s", ErrInvalidLineFormat, logLine)
+		return nil, fmt.Errorf("%w: PlayerJoined: %s", ErrInvalidLineFormat, logLine)
 	}
 	port, _ := strconv.Atoi(match[3])
 	id, _ := strconv.Atoi(match[1])
@@ -29,8 +29,7 @@ func PlayerJoined(source, timestamp, logLine string) (amqp.Message, error) {
 	version, _ := strconv.Atoi(match[4])
 
 	event := events.NewPlayerJoinedEvent()
-	event.Timestamp = formatedTimestamp()
-	event.EventSource = source
+	event.SetEventSource(source)
 
 	player := dto.Player{
 		Name:    match[5],
@@ -49,5 +48,5 @@ func PlayerJoined(source, timestamp, logLine string) (amqp.Message, error) {
 		Exchange: event.Type,
 		Payload:  event.Marshal(),
 	}
-	return msg, nil
+	return toMsgList(msg, nil)
 }
