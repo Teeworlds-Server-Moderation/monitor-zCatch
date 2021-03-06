@@ -25,9 +25,11 @@ func MapChange(source, timestamp, logLine string) ([]amqp.Message, error) {
 	}
 
 	// we get multiple events from the map change
+	// update server state
 	oldMap := ServerState.GetMap()
 	newMap := match[2]
 	leftPlayers := ServerState.PlayerLeaveAll()
+	ServerState.SetMap(newMap)
 
 	// n left player events + map change event
 	eventMessages := make([]amqp.Message, 0, len(leftPlayers)+1)
