@@ -96,6 +96,8 @@ func init() {
 	// exchanges that the publisher uses and publishes messages to
 	createExchanges(
 		publisher,
+		events.TypeChat,
+		events.TypeChatTeam,
 		events.TypeMapChanged,
 		events.TypePlayerJoined,
 		events.TypePlayerLeft,
@@ -123,6 +125,7 @@ func init() {
 		events.TypePlayerJoined,
 	)
 
+	// leave log for testing
 	createQueueAndBindToExchanges(subscriber,
 		"leave-log",
 		events.TypePlayerLeft,
@@ -134,10 +137,17 @@ func init() {
 		events.TypeVoteSpecStarted,
 	)
 
-	// log map changes
+	// log map changes for testing
 	createQueueAndBindToExchanges(subscriber,
 		"map-change-log",
 		events.TypeMapChanged,
+	)
+
+	// chat logs for testing
+	createQueueAndBindToExchanges(subscriber,
+		"chat-log",
+		events.TypeChat,
+		events.TypeChatTeam,
 	)
 
 }
