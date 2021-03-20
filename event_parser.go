@@ -58,6 +58,8 @@ func parseEvent(source, line string) ([]amqp.Message, error) {
 		return parse.Chat(source, timestamp, logLine)
 	case "teamchat":
 		return parse.ChatTeam(source, timestamp, logLine)
+	case "whisper":
+		return parse.ChatWhisper(source, timestamp, logLine)
 	}
 	return nil, fmt.Errorf("Unknown log level: %s", logLevel)
 }
