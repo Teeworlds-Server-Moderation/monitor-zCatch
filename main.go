@@ -148,6 +148,7 @@ func init() {
 		"chat-log",
 		events.TypeChat,
 		events.TypeChatTeam,
+		events.TypeChatWhisper,
 	)
 
 }
