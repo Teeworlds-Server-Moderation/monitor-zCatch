@@ -102,7 +102,6 @@ func init() {
 		events.TypeMapChanged,
 		events.TypePlayerJoined,
 		events.TypePlayerLeft,
-		events.TypePlayerLeft,
 		events.TypeVoteKickStarted,
 		events.TypeVoteSpecStarted,
 		events.TypeVoteOptionStarted,
