@@ -98,6 +98,7 @@ func init() {
 		publisher,
 		events.TypeChat,
 		events.TypeChatTeam,
+		events.TypeChatWhisper,
 		events.TypeMapChanged,
 		events.TypePlayerJoined,
 		events.TypePlayerLeft,
