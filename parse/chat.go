@@ -15,7 +15,7 @@ var (
 	// 1: ID
 	// 2: nick
 	// 3: text
-	chatRegex = regexp.MustCompile(`([\d]+):[\d]+:(.{1,16}): (.*)$`)
+	chatRegex = regexp.MustCompile(`([-\d]+):[-\d]+:(.{1,16}): (.*)$`)
 )
 
 // Chat returns event messages when the logLine contains the proper line.
