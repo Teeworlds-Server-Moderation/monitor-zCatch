@@ -48,7 +48,7 @@ func MapChange(source, timestamp, logLine string) ([]amqp.Message, error) {
 	}
 
 	// map change event
-	event := events.NewMapChanedEvent()
+	event := events.NewMapChangedEvent()
 	event.SetEventSource(source)
 	event.OldMap = oldMap
 	event.NewMap = newMap

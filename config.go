@@ -2,6 +2,7 @@ package main
 
 import (
 	configo "github.com/jxsl13/simple-configo"
+	"github.com/jxsl13/simple-configo/parsers"
 )
 
 const (
@@ -35,31 +36,31 @@ func (c *Config) Options() (options configo.Options) {
 			Key:           "MONITOR_ECON_ADDRESS",
 			Description:   "Please provide the address of your configured server Econ: <IP>:<Port>",
 			Mandatory:     true,
-			ParseFunction: configo.DefaultParserRegex(&c.EconAddress, ipPortRegex, "Please provide a valid IP:Port address"),
+			ParseFunction: parsers.Regex(&c.EconAddress, ipPortRegex, "Please provide a valid IP:Port address"),
 		},
 		{
 			Key:           "MONITOR_ECON_PASSWORD",
 			Description:   "The password to log into your Econ.",
 			Mandatory:     true,
-			ParseFunction: configo.DefaultParserString(&c.EconPassword),
+			ParseFunction: parsers.String(&c.EconPassword),
 		},
 		{
 			Key:           "MONITOR_BROKER_ADDRESS",
 			Description:   "The address of your broker in the container is rabbitmq:5672",
 			DefaultValue:  "localhost:5672",
-			ParseFunction: configo.DefaultParserRegex(&c.BrokerAddress, brokerAddressRegex, "Please provide a valid <IP>:<Port> address'"),
+			ParseFunction: parsers.Regex(&c.BrokerAddress, brokerAddressRegex, "Please provide a valid <IP>:<Port> address'"),
 		},
 		{
 			Key:           "MONITOR_BROKER_USER",
 			Description:   "The user that can access the broker, default: tw-admin",
 			DefaultValue:  "tw-admin",
-			ParseFunction: configo.DefaultParserString(&c.BrokerUsername),
+			ParseFunction: parsers.String(&c.BrokerUsername),
 		},
 		{
 			Key:           "MONITOR_BROKER_PASSWORD",
 			Mandatory:     true,
 			Description:   "The password to access the broker with the corresonding username.",
-			ParseFunction: configo.DefaultParserString(&c.BrokerPassword),
+			ParseFunction: parsers.String(&c.BrokerPassword),
 		},
 	}
 	return optionsList
