@@ -9,9 +9,9 @@ import (
 	"syscall"
 
 	"github.com/Teeworlds-Server-Moderation/common/amqp"
-	env "github.com/Teeworlds-Server-Moderation/common/env"
 	"github.com/Teeworlds-Server-Moderation/common/events"
 	"github.com/Teeworlds-Server-Moderation/common/topics"
+	configo "github.com/jxsl13/simple-configo"
 	"github.com/jxsl13/twapi/econ"
 )
 
@@ -62,7 +62,7 @@ func createQueueAndBindToExchanges(qcb QueueCreateBinder, queue string, exchange
 }
 
 func init() {
-	err := env.Parse(cfg)
+	err := configo.ParseEnv(cfg)
 	if err != nil {
 		log.Fatalf("Failed to get environment variables: %s\n", err)
 	}

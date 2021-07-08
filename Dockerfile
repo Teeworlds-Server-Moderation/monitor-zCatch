@@ -18,9 +18,9 @@ RUN go get -d && go build -a -ldflags '-w -extldflags "-static"' -o monitor-zcat
 
 FROM alpine:latest as minimal
 
-ENV MONITOR_BROKER_ADDRESS=rabbitmq:5672
-ENV MONITOR_BROKER_USER="tw-admin"
-ENV MONITOR_BROKER_PASSWORD=""
+ENV MONITOR_BROKER_ADDRESS rabbitmq:5672
+ENV MONITOR_BROKER_USER ""
+ENV MONITOR_BROKER_PASSWORD ""
 
 WORKDIR /app
 COPY --from=build /build/monitor-zcatch .
